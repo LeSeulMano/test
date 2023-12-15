@@ -397,7 +397,7 @@ section {
       margin-bottom: .1rem;
     }
 
-    .material-icons {
+    IonIcon {
       font-size: $h5-text;
       color: $primary-white;
       animation: updown 3s ease infinite;

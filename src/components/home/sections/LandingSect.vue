@@ -86,7 +86,7 @@
     </div>
     <div class="scroll-next-section">
       <p>Découvrez qui nous sommes !</p>
-      <span class="material-icons">expand_more</span>
+      <IonIcon name="chevron-down-outline"></IonIcon>
     </div>
   </section>
 

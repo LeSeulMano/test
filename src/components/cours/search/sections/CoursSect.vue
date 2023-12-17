@@ -18,7 +18,7 @@
             <router-link class="router-link" :to="{ name: 'Result', query: {search: '2'}}">2A</router-link>
           </div>
           <div class="btn btn-cours pointer" data-aos="fade-up" data-aos-delay="800" data-aos-duration="500">
-            <router-link class="router-link" :to="{ name: 'Result', query: {result: '3'}}">3A</router-link>
+            <router-link class="router-link" :to="{ name: 'Result', query: {search: '3'}}">3A</router-link>
           </div>
         </div>
         <div class="btn btn-primary btn-icon-forward adding-course" data-aos="fade-up" data-aos-delay="950" data-aos-duration="500">

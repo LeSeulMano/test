@@ -23,6 +23,29 @@
               </select>
             </div>
             <div>
+              <label for="specialities">Spécialité</label>
+              <select name="specialities" v-model="specialities" :disabled="disableSelect">
+                <option value="MT">MT</option>
+                <option value="ME">ME</option>
+                <option value="GCB">GCB</option>
+                <option value="GI">GI</option>
+                <option value="IIA">IIA</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="type">Type</label>
+              <select name="type" v-model="type">
+                <option value="CM" selected>CM</option>
+                <option value="TD">TD</option>
+                <option value="Fiche">Fiche</option>
+              </select>
+            </div>
+            <div>
+              <label for="teacher">Nom du chargé de cours</label>
+              <input type="text" v-model="teacher" name="teacher">
+            </div>
+            <div>
               <label for="matiere">Matière</label>
               <select name="matiere" v-if="promotion == '1A'" v-model="matter">
                 <option v-for="(matter, index) in first" :key="index" :value="matter">{{ matter }}</option>
@@ -46,28 +69,6 @@
                 <option v-for="(matter, index) in iia" :key="index" :value="matter">{{ matter }}</option>
               </select>
             </div>
-            <div>
-              <label for="type">Type</label>
-              <select name="type" v-model="type">
-                <option value="CM" selected>CM</option>
-                <option value="TD">TD</option>
-                <option value="Fiche">Fiche</option>
-              </select>
-            </div>
-            <div>
-              <label for="teacher">Nom du chargé de cours</label>
-              <input type="text" v-model="teacher" name="teacher">
-            </div>
-            <div>
-              <label for="specialities">Spécialité</label>
-              <select name="specialities" v-model="specialities" :disabled="disableSelect">
-                <option value="MT">MT</option>
-                <option value="ME">ME</option>
-                <option value="GCB">GCB</option>
-                <option value="GI">GI</option>
-                <option value="IIA">IIA</option>
-              </select>
-            </div>
           </div>
           <div id="drop-zone" @dragover.prevent="handleDragOver" @drop.prevent="handleDrop" @click="handleClick">
             {{ fileName || ' Faites glisser un fichier ici' }}
@@ -76,7 +77,7 @@
                  @change="handleFileChange">
           <div class="checkbox">
             <label for="conditions">Accepter les
-              <router-link class="router-link" to="/cgu">Conditions Générales
+              <router-link @click="saveFormData" class="router-link" to="/cgu">Conditions Générales
                 <ion-icon name="open"></ion-icon>
               </router-link>
             </label>
@@ -254,6 +255,7 @@ export default {
         this.animateModal()
       })
           .catch((error) => {
+            console.log(error)
             this.loading = false;
             this.showErrorModal(error);
           });
@@ -290,6 +292,17 @@ export default {
         this.fileName = null;
       }
     },
+    saveFormData() {
+      const formData = {
+        year: this.year,
+        promotion: this.promotion,
+        specialities: this.specialities,
+        type: this.type,
+        teacher: this.teacher,
+        matter: this.matter
+      };
+      localStorage.setItem('formData', JSON.stringify(formData));
+    },
   },
   watch: {
     promotion(newPromotion) {
@@ -311,7 +324,27 @@ export default {
   mounted() {
     const screenHeight = window.innerHeight;
     document.querySelector('#sect5').style.height = screenHeight + "px";
-  }
+  },
+  created() {
+
+    const storedFormData = localStorage.getItem('formData');
+
+    if (storedFormData) {
+
+      const formData = JSON.parse(storedFormData);
+      this.year = formData.year;
+      this.promotion = formData.promotion;
+      this.specialities = formData.specialities;
+      this.type = formData.type;
+      this.teacher = formData.teacher;
+      this.matter = formData.matter;
+    }
+  },
+  beforeUnmount() {
+    if (this.$route.path !== '/cgu') {
+      localStorage.removeItem('formData');
+    }
+  },
 }
 </script>
 
@@ -341,7 +374,8 @@ export default {
   .ajouter_cours {
     position: absolute;
     left: 50%;
-    top: 12%;
+    top: 15%;
+    overflow-y: hidden;
     transform: translateX(-50%);
 
     // Effet Glass Morphism

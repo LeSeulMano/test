@@ -10,6 +10,7 @@
     </div>
     <h4>{{ matter }}</h4>
     <h5>{{ name }}</h5>
+    <h5>{{ teacher }}</h5>
     <div class="file-cta">
       <a :href="getFile(path)" target="_blank">
         <div class="btn btn-primary btn-icon-forward pointer">
@@ -113,7 +114,8 @@ export default ({
     matter: String,
     name: String,
     date: Number,
-    path: String
+    path: String,
+    teacher: String
   },
 
 

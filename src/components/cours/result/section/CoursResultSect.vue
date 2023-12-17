@@ -115,7 +115,7 @@
             <CoursCard
                 v-for="(cour, index) in cours.filter(c => c.type == (currentType == 1 ? 'CM' : currentType == 2 ? 'TD' : currentType == 3 ? 'Fiche' : 'CM') && c.matter == currentMatter && c.promotion == (currentYear == 1 ? '1' : currentYear == 2 ? '2' : currentSpe == 1 ? 'ME' : currentSpe == 2 ? 'MT' : currentSpe == 3 ? 'IIA' : currentSpe == 4 ? 'GCB' : currentSpe == 5 ? 'GI' : '1'))"
                 :key="index" :matter="cour.matter" :type="cour.type" :date="cour.year" :name="cour.name"
-                :path="cour.path" :teacher="cour.teacher"></CoursCard>
+                :path="cour.path" :teacher="cour.teacher" :author="cour.author"></CoursCard>
           </div>
         </div>
       </div>

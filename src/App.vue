@@ -11,6 +11,7 @@
 
 <script>
 import CookieBanner from '@/components/modal/CookieModal.vue';
+
 export default {
   name: 'App',
   components: {
@@ -36,6 +37,7 @@ export default {
         };
       }
     },
+
   },
 }
 </script>

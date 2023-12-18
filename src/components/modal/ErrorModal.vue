@@ -75,7 +75,7 @@ export default {
   width: 40rem;
   background-color: $primary-white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border-radius: 5%;
+  border-radius: 15px;
   overflow: hidden;
   z-index: 1000;
 

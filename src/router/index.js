@@ -9,7 +9,8 @@ import {checkAdminPermission} from "@/components/auth/authService";
 import AdminPage from "@/pages/staff/AdminPage.vue";
 import ShopPage from "@/pages/ShopPage.vue";
 import PodcastPage from "@/pages/PodcastPage.vue";
-import AccountPage from "@/pages/AccountPage.vue";
+import AccountPage from "@/pages/account/AccountPage.vue";
+import ForgotPage from "@/pages/account/ForgotPage.vue";
 
 const routes = [
     {
@@ -66,6 +67,11 @@ const routes = [
         path: "/account",
         component: AccountPage,
         meta: {requiresAuth: true, requiresAdmin: false}
+    },
+    {
+        name: "Forgot",
+        path: "/forgot/:token",
+        component: ForgotPage
     }
 ];
 
@@ -78,7 +84,6 @@ router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
     const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
     const isLoggedIn = document.cookie.includes('token=');
-
     checkAdminPermission().then((isAdmin) => {
         if (requiresAuth && !isLoggedIn) {
             next('/login');

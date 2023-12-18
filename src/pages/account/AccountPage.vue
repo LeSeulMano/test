@@ -8,14 +8,14 @@
 <script>
 
 import headerComp from "@/components/header/HeaderComp.vue";
-import AccountSect from "@/components/account/section/AccountSect.vue";
+import AccountSect from "@/components/account/page/AccountSect.vue";
 export default ({
   components: {headerComp, AccountSect}
 })
 </script>
 
 <style lang="scss">
-@import '../utils/computer/components.scss';
+@import '../../utils/computer/components';
 
 main{
   overflow: hidden;

@@ -1,6 +1,6 @@
 <template>
   <section id="section4" class="common_login">
-    <div class="connexion_inscription">
+    <div class="connexion_inscription" v-if="!isForgot">
       <div class="choose_form_header">
         <h2 id="connexion" action="connexion">Se connecter</h2>
         <h2 action="inscription">S'inscrire</h2>
@@ -14,6 +14,9 @@
             <label for="mot_de_passe">Mot de passe</label>
             <input type="password" name="mot_de_passe" v-model="password" placeholder="Entrez votre mot de passe"
                    required>
+            <div class="history" @click="forgot">
+              <span>Mot de passe oublié</span>
+            </div>
             <div class="btn-action">
               <div class="btn btn-secondary btn-icon-backward">
                 <router-link class="router-link" to="/">
@@ -29,6 +32,7 @@
               </div>
             </div>
           </form>
+
         </div>
         <div class="inscription">
           <form>
@@ -77,6 +81,7 @@
     <RegisterModal :showModal="showModalResgiter"></RegisterModal>
     <SuccessModal :showModal="showModalLogin"></SuccessModal>
     <LoadingOverlay :loading="loading" />
+    <ForgotPassword :isForgot="isForgot" @change-tab="showTab"></ForgotPassword>
   </section>
 </template>
 
@@ -88,12 +93,13 @@ import ErrorModal from "@/components/modal/ErrorModal.vue";
 import anime from "animejs";
 import SuccessModal from "@/components/modal/SuccessModal.vue";
 import LoadingOverlay from "@/components/modal/WaitingModal.vue";
-
+import ForgotPassword from "@/components/login/section/ForgotPassword.vue";
 export default {
   components: {
     ErrorModal, RegisterModal, SuccessModal,
     IonIcon,
-    LoadingOverlay
+    LoadingOverlay,
+    ForgotPassword
   },
   data() {
     return {
@@ -106,10 +112,15 @@ export default {
       email: '',
       repeatPassword: '',
       check: '',
-      loading: false
+      loading: false,
+      isForgot: false
     }
   },
   methods: {
+    showTab() {
+      this.isForgot = false;
+      window.location.reload();
+    },
     animateModalRegister() {
       this.showModalResgiter = true;
       anime({
@@ -265,6 +276,9 @@ export default {
       };
       localStorage.setItem('formData', JSON.stringify(formData));
     },
+    forgot(){
+      this.isForgot = true;
+    }
   },
 
   mounted() {
@@ -276,16 +290,21 @@ export default {
     main.style.width = screenWidth + 'px';
     main.style.height = screenHeight + 'px';
     document.querySelector('#section4').style.height = screenHeight + "px";
-    this.showInscription();
-    let inscriptionH2 = document.querySelector('h2[action="inscription"]')
-    let connexionH2 = document.getElementById('connexion');
-
-    connexionH2.addEventListener('click', () => {
-      this.showConnexion();
-    });
-    inscriptionH2.addEventListener('click', () => {
+    try {
       this.showInscription();
-    });
+      let inscriptionH2 = document.querySelector('h2[action="inscription"]')
+      let connexionH2 = document.getElementById('connexion');
+
+      connexionH2.addEventListener('click', () => {
+        this.showConnexion();
+      });
+      inscriptionH2.addEventListener('click', () => {
+        this.showInscription();
+      });
+    }catch (e){
+      return;
+    }
+
   },
 
   beforeUnmount() {
@@ -506,10 +525,33 @@ export default {
 
       }
 
+      .history {
+        margin-top: 1rem;
+        position: relative;
+        width: 15rem;
+        cursor: pointer;
+        margin-left: 7rem;
+        &:after {
+          position: absolute;
+          content: '';
+          width: 60%;
+          top: 100%;
+          left: 34%;
+          transform: translateX(-50%);
+          height: 2px;
+          background-color: $primary-red;
+          transition: .4s;
+        }
+
+        &:hover::after {
+          width: 50%;
+
+        }
+      }
+
       .connexion, .inscription {
         position: absolute;
         transition: opacity .5s, max-height .4s;
-
       }
     }
 

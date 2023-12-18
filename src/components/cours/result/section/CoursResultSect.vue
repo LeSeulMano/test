@@ -44,7 +44,7 @@
             </div>
           </div>
           <div class="subject-courses-select">
-            <select>
+            <select v-model="currentMatter">
               <option v-for="(matter, index) in currentMatterYear" :key="index" :value="matter">{{ matter }}</option>
             </select>
           </div>
@@ -103,7 +103,7 @@
             </div>
           </div>
           <div v-if="currentYear === 3" class="subject-spe-select">
-            <select>
+            <select v-model="currentSpePhone" @change="onYearChange('phone')">
               <option value="ME">ME</option>
               <option value="MT">MT</option>
               <option value="IIA">IIA</option>
@@ -113,9 +113,9 @@
           </div>
           <div class="files">
             <CoursCard
-                v-for="(cour, index) in cours.filter(c => c.type == (currentType == 1 ? 'CM' : currentType == 2 ? 'TD' : currentType == 3 ? 'Fiche' : 'CM') && c.matter == currentMatter && c.promotion == currentYear)"
+                v-for="(cour, index) in cours.filter(c => c.type == (currentType == 1 ? 'CM' : currentType == 2 ? 'TD' : currentType == 3 ? 'Fiche' : 'CM') && c.matter == currentMatter && c.promotion == (currentYear == 1 ? '1' : currentYear == 2 ? '2' : currentSpe == 1 ? 'ME' : currentSpe == 2 ? 'MT' : currentSpe == 3 ? 'IIA' : currentSpe == 4 ? 'GCB' : currentSpe == 5 ? 'GI' : '1'))"
                 :key="index" :matter="cour.matter" :type="cour.type" :date="cour.year" :name="cour.name"
-                :path="cour.path"></CoursCard>
+                :path="cour.path" :teacher="cour.teacher" :author="cour.author"></CoursCard>
           </div>
         </div>
       </div>
@@ -155,7 +155,6 @@ export default ({
     const gcbTooltip = ["Plan", "CAO", "GrosOeuvre", "SecondOeuvre", "Economie de la Maitrise de l'oeuvre", "Architecture", "Mecanique des Sols", "Résistance des Matériaux"];
     const meTooltip = ["Analyse Appliqué", "Résistance des Matériaux", "Procédé de Fabrication", "Capteurs pour la mécanique", "Electrotechnique", "Mécanique des fluides", "Traitement de signal en Mécanique", "Conception", "Mecanique", "Probabilité", "Thermodynamique", "Mécanique des milieu continus", "Analyse Numérique", "Energétique"];
 
-
     let currentYear = 1;
     let currentSpe = 0;
     let currentType = 1;
@@ -163,7 +162,9 @@ export default ({
     let search = '';
     let cours = [];
     const link = 'https://delmoo.fr:5000';
+    let currentSpePhone = 'ME';
     return {
+      currentSpePhone,
       firstTooltip,
       secondTooltip,
       meTooltip,
@@ -191,7 +192,6 @@ export default ({
       gi,
     }
   },
-
   methods: {
     showErrorModal(message) {
       this.errorMessage = message;
@@ -224,6 +224,19 @@ export default ({
       this.currentMatter = event.currentTarget.lastChild.innerText;
     },
     onYearChange(year) {
+      if(year == 'phone') {
+        if (window.matchMedia("(max-width: 1024px)").matches) {
+          const valueMap = {
+            ME: 4,
+            MT: 5,
+            IIA: 6,
+            GCB: 7,
+            GI: 8
+          };
+          const selectedValue = valueMap[this.currentSpePhone];
+          year = selectedValue;
+        }
+      }
       document.querySelectorAll(".btn-subject-selected")[0].classList.remove("btn-subject-selected");
       document.querySelectorAll(".pointer")[3].classList.add("btn-subject-selected");
       this.currentMatter = year == 1 ? this.first[0] : year == 2 ? this.second[0] : year == 3 ? this.me[0] : year == 4 ? this.me[0] : year == 5 ? this.mt[0] : year == 6 ? this.iia[0] : year == 7 ? this.gcb[0] : year == 8 ? this.gi[0] : this.first[0];
@@ -242,7 +255,6 @@ export default ({
       }
       this.currentMatterYear = year == 1 ? this.first : year == 2 ? this.second : year == 3 ? this.me : year == 4 ? this.me : year == 5 ? this.mt : year == 6 ? this.iia : year == 7 ? this.gcb : year == 8 ? this.gi : this.first;
       this.currentMatterYearTooltip = year == 1 ? this.firstTooltip : year == 2 ? this.secondTooltip : year == 3 ? this.meTooltip : year == 4 ? this.meTooltip : year == 5 ? this.mtTooltip : year == 6 ? this.iiaTooltip : year == 7 ? this.gcbTooltip : year == 8 ? this.giTootlip : this.firstTooltip;
-
     }
   },
 
@@ -264,61 +276,73 @@ export default ({
     }
 
     const search = this.$route.query.search;
-    let isYear = false;
-    switch (search) {
-      case "1":
-        axios.post(this.link + "/cours/year", {
-          year: '1'
-        }, {
-          validateStatus: function (status) {
-            return status === 201 || status === 500;
-          }
-        }).then((res) => {
-          if (res.status == 500) {
-            this.showErrorModal(res.data.message);
-            return;
-          }
-          this.cours = res.data.json;
-        })
-        this.currentYear = 1;
-        isYear = true;
-        break;
-      case '2':
-        axios.post(this.link + "/cours/year", {
-          year: '2'
-        }, {
-          validateStatus: function (status) {
-            return status === 201 || status === 500;
-          }
-        }).then((res) => {
-          if (res.status == 500) {
-            this.showErrorModal(res.data.message);
-            return;
-          }
-          this.cours = res.data.json;
-        })
-        isYear = true;
-        this.currentYear = 2;
-        break;
-      case '3':
-        axios.post(this.link + "/cours/year", {
-          year: '3'
-        }, {
-          validateStatus: function (status) {
-            return status === 201 || status === 500;
-          }
-        }).then((res) => {
-          if (res.status == 500) {
-            this.showErrorModal(res.data.message);
-            return;
-          }
-          this.cours = res.data.json;
-        })
-        isYear = true;
+    // let isYear = false;
+
+
+    // switch (search) {
+    //   case "1":
+    //     axios.post(this.link + "/cours/year", {
+    //       year: '1'
+    //     }, {
+    //       validateStatus: function (status) {
+    //         return status === 201 || status === 500;
+    //       }
+    //     }).then((res) => {
+    //       if (res.status == 500) {
+    //         this.showErrorModal(res.data.message);
+    //         return;
+    //       }
+    //       this.cours = res.data.json;
+    //     })
+    //     this.currentYear = 1;
+    //     isYear = true;
+    //     break;
+    //   case '2':
+    //     axios.post(this.link + "/cours/year", {
+    //       year: '2'
+    //     }, {
+    //       validateStatus: function (status) {
+    //         return status === 201 || status === 500;
+    //       }
+    //     }).then((res) => {
+    //       if (res.status == 500) {
+    //         this.showErrorModal(res.data.message);
+    //         return;
+    //       }
+    //       this.cours = res.data.json;
+    //     })
+    //     isYear = true;
+    //     this.currentYear = 2;
+    //     break;
+    //   case '3':
+    //     axios.post(this.link + "/cours/year", {
+    //       year: '3'
+    //     }, {
+    //       validateStatus: function (status) {
+    //         return status === 201 || status === 500;
+    //       }
+    //     }).then((res) => {
+    //       if (res.status == 500) {
+    //         this.showErrorModal(res.data.message);
+    //         return;
+    //       }
+    //       this.cours = res.data.json;
+    //     })
+    //     isYear = true;
+    //     this.currentYear = 3;
+    //     break;
+    // }
+
+    if (search != '3' || search != '2' || search != '1') {
+
+      if (search == '1' || search == '2') {
+        this.currentYear = parseInt(search)
+      }
+      if (search == '3'){
         this.currentYear = 3;
-        break;
-    }
-    if (!search) {
+        this.currentSpe = 1;
+        this.currentMatterYear = this.me;
+      }
       axios.get(this.link + "/cours", {
         validateStatus: function (status) {
           return status === 201 || status === 500;
@@ -329,9 +353,10 @@ export default ({
           return;
         }
         this.cours = res.data.json;
+
       })
     } else {
-      if (!isYear) {
+      // if (!isYear) {
         axios.post(this.link + "/cours/search", {
           search: search
         }, {
@@ -345,9 +370,10 @@ export default ({
           }
           this.cours = res.data.json;
         })
-      }
+      // }
     }
-    document.querySelectorAll(".pointer")[3].classList.add("btn-subject-selected");
+      document.querySelectorAll(".pointer")[3].classList.add("btn-subject-selected");
+
   }
 })
 </script>
@@ -447,7 +473,7 @@ export default ({
 
         div {
           border-radius: 0 $half-round $half-round 0;
-          padding: 25px 1.6rem;
+          padding: 24.5px 1.6rem;
           cursor: pointer;
           box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
           background-color: $primary-white;
@@ -718,7 +744,7 @@ export default ({
           }
 
           div {
-            padding: 1.9rem 1.5rem;
+            padding: 1.85rem 1.5rem;
 
             ion-icon {
               font-size: $h6-text;

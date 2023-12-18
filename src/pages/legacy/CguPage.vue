@@ -2,6 +2,13 @@
   <headerComp :selected="5"></headerComp>
   <main>
     <section id="sect6">
+      <div class="return-button">
+        <div class="btn btn-secondary btn-icon-backward pointer" @click="goBack">
+          <div class="router-link">
+            <IonIcon name="arrow-back"></IonIcon>
+          </div>
+        </div>
+      </div>
       <div class="condition-general">
         <h3>Conditions générales d'utilisation</h3>
         <div class="content">
@@ -57,12 +64,26 @@
 
 <script>
 import headerComp from "@/components/header/HeaderComp.vue";
+import {IonIcon} from '@ionic/vue';
 
 export default ({
-  components: {headerComp},
+  components: {
+    headerComp,
+    IonIcon
+  },
   mounted() {
     const screenHeight = window.innerHeight;
     document.querySelector('#sect6').style.height = screenHeight + "px";
+  },
+  methods: {
+    goBack() {
+      const back = this.$router.options.history.state.back;
+      if (back) {
+        this.$router.push(back);
+      } else {
+        this.$router.push('/');
+      }
+    },
   }
 })
 </script>
@@ -90,6 +111,15 @@ main {
       background-position-y: 100%;
       left: 50%;
       transform: translateX(-50%);
+    }
+
+    .return-button{
+      position: absolute;
+      top: 13%;
+      left: 5%;
+      .router-link:before{
+        background-color: $primary-red;
+      }
     }
 
     .condition-general {

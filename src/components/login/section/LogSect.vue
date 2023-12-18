@@ -47,7 +47,7 @@
 
             <div class="checkbox">
               <label for="conditions">Accepter les
-                <router-link class="router-link" to="/cgu">Conditions Générales
+                <router-link class="router-link" to="/cgu" @click="saveFormData">Conditions Générales
                   <ion-icon name="open"></ion-icon>
                 </router-link>
               </label>
@@ -74,7 +74,6 @@
     </div>
     <ErrorModal :errorModalVisible="errorModalVisible" :message="errorMessage"
                 @update:errorModalVisible="updateErrorModal"></ErrorModal>
-
     <RegisterModal :showModal="showModalResgiter"></RegisterModal>
     <SuccessModal :showModal="showModalLogin"></SuccessModal>
     <LoadingOverlay :loading="loading" />
@@ -256,7 +255,16 @@ export default {
           this.animateModalLogin();
         }
       })
-    }
+    },
+    saveFormData() {
+      const formData = {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+        repeatPassword: this.repeatPassword
+      };
+      localStorage.setItem('formData', JSON.stringify(formData));
+    },
   },
 
   mounted() {
@@ -278,7 +286,27 @@ export default {
     inscriptionH2.addEventListener('click', () => {
       this.showInscription();
     });
-  }
+  },
+
+  beforeUnmount() {
+    if (this.$route.path !== '/cgu') {
+      localStorage.removeItem('formData');
+    }
+  },
+
+  created() {
+
+    const storedFormData = localStorage.getItem('formData');
+
+    if (storedFormData) {
+
+      const formData = JSON.parse(storedFormData);
+      this.username = formData.username
+      this.email = formData.email;
+      this.password = formData.password;
+      this.repeatPassword = formData.repeatPassword;
+    }
+  },
 
 }
 

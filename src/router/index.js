@@ -42,7 +42,8 @@ const routes = [
     {
         name: "CGU",
         path: "/cgu",
-        component: CguPage
+        component: CguPage,
+        props: true
     },
     {
         name: "Admin",

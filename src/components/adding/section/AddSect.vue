@@ -115,7 +115,7 @@
 
     <SuccessModal :showModal="showModal"></SuccessModal>
 
-    <LoadingOverlay :loading="loading" />
+    <LoadingOverlay :loading="loading"/>
   </section>
 </template>
 
@@ -205,9 +205,9 @@ export default {
     },
     validate() {
       let promo = '';
-      if (this.promotion == "3A"){
+      if (this.promotion == "3A") {
         promo = this.specialities;
-      }else {
+      } else {
         promo = this.promotion;
       }
       this.loading = true;
@@ -311,6 +311,24 @@ export default {
   mounted() {
     const screenHeight = window.innerHeight;
     document.querySelector('#sect5').style.height = screenHeight + "px";
+    const sect5 = document.getElementById('sect5');
+
+    sect5.addEventListener('scroll', function() {
+      const scrollHeight = sect5.scrollHeight;
+
+      const clientHeight = sect5.clientHeight;
+
+      const overflowHeight = scrollHeight - clientHeight;
+
+      const maxSect5 = scrollHeight - clientHeight;
+
+      const scrollTop = sect5.scrollTop;
+
+      const overflow = overflowHeight - (maxSect5 - scrollTop) + 50
+
+      sect5.style.setProperty('--after-top', `calc(100vh - ${overflow}px)`);
+    });
+
   }
 }
 </script>
@@ -324,6 +342,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  min-height: 100vh;
 
   &:before {
     position: absolute;
@@ -338,10 +359,22 @@ export default {
     transform: translateX(-50%);
   }
 
+  &::after {
+    content: "";
+    position: fixed;
+    top: var(--after-top, 100%);
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $primary-red; // Set your background color here
+    z-index: -2; // Ensure it's behind other content
+    display: block;
+  }
+
   .ajouter_cours {
     position: absolute;
     left: 50%;
-    top: 12%;
+    top: 20%;
     transform: translateX(-50%);
 
     // Effet Glass Morphism
